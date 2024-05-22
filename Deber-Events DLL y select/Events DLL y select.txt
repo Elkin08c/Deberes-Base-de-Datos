@@ -1,0 +1,127 @@
+- Crear el script DDL para la base de datos llamada events_db
+- Generar datos aleatorios próximos a reales para cada tabla.
+
+
+CREATE TABLE member (
+    id INT PRIMARY KEY,
+    fullname VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    age INT NOT NULL
+);
+
+
+
+INSERT INTO member (id, fullname, email, age) VALUES 
+('1', 'John Doe', 'john.doe@example.com', 25),
+('2', 'Jane Smith', 'jane.smith@example.com', 30),
+('3', 'Alice Johnson', 'alice.johnson@example.com', 28);
+
+
+
+
+
+CREATE TABLE event (
+    id INT PRIMARY KEY,
+    description VARCHAR(255) NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    total_attendees INT,
+    city VARCHAR(100) NOT NULL
+);
+
+
+
+
+INSERT INTO event (id, description, start_date, end_date, total_attendees, city) VALUES 
+('1', 'Tech Conference 2024', '2024-06-10', '2024-06-12', 300, 'New York'),
+('2', 'Medical Symposium 2024', '2024-07-15', '2024-07-18', 150, 'Los Angeles');
+![[Pasted image 20240521200239.png]]
+
+
+CREATE TABLE conference (
+    id INT  PRIMARY KEY,
+    title VARCHAR(100) NOT NULL,
+    speaker VARCHAR(100) NOT NULL,
+    hour TIME NOT NULL,
+    day DATE NOT NULL,
+    total_attendees INT,
+    event_id INT,
+    FOREIGN KEY (event_id) REFERENCES event(id)
+);
+
+
+
+INSERT INTO conference (id, title, speaker, hour, day, total_attendees, event_id) VALUES 
+('1', 'AI in Healthcare', 'Dr. Jane Williams', '09:00:00', '2024-06-10', 100, 1),
+('2','Future of Technology', 'John Doe', '14:00:00', '2024-06-11', 200, 1),
+('3' ,'Advancements in Surgery', 'Dr. Alan Smith', '10:00:00', '2024-07-16', 80, 2);
+
+
+
+
+CREATE TABLE register (
+    id INT  PRIMARY KEY,
+    member_id INT,
+    conference_id INT,
+    code VARCHAR(50) UNIQUE NOT NULL,
+    registered_at DATE NOT NULL,
+    assisted BOOLEAN,
+    FOREIGN KEY (member_id) REFERENCES member(id),
+    FOREIGN KEY (conference_id) REFERENCES conference(id),
+    UNIQUE (member_id, conference_id)
+);
+
+
+INSERT INTO register (id, member_id, conference_id, code, registered_at, assisted) VALUES 
+('1', 1, 1, 'ABC123', '2024-05-10 09:00:00', TRUE),
+('2', 2, 2, 'XYZ789', '2024-05-11 10:30:00', FALSE),
+('3', 3, 3, 'LMN456', '2024-05-12 11:45:00', TRUE);
+
+
+
+
+- Generar 5 consultas con SELECT aplicando condicionales con WHERE y ORDER BY.
+
+- **Miembros registrados en una conferencia específica:**
+
+SELECT m.fullname, m.email 
+FROM member m
+JOIN register r ON m.id = r.member_id
+WHERE r.conference_id = 1;
+
+
+
+
+- **Conferencias de un evento específico, ordenadas por hora:**
+
+SELECT c.title, c.speaker, c.hour 
+FROM conference c
+WHERE c.event_id = 1 
+ORDER BY c.hour;
+
+
+
+
+- **Eventos en una ciudad específica:**
+
+SELECT * FROM event 
+WHERE city = 'New York';
+
+
+
+
+- **Eventos con más de un número específico de asistentes, ordenados por total de asistentes:**
+
+SELECT * FROM event 
+WHERE total_attendees > 100 
+ORDER BY total_attendees DESC;
+
+
+
+
+- **Registros realizados después de una fecha específica:**
+
+SELECT * FROM register 
+WHERE registered_at > '2024-05-11 00:00:00';
+
+
